@@ -1,0 +1,48 @@
+# The following settings require a restart of docker to take full effect, A reload will only have partial or no effect:
+# log_driver
+# bip
+# blocked_interfaces
+# extra_iptables_args
+# device
+
+config globals 'globals'
+	option data_root '/opt/docker/'
+	option log_level 'error'
+	option auto_start '1'
+	option bip '172.31.0.1/24'
+	option iptables '1'
+	option fixed_cidr '172.31.0.0/24'
+	option default-gateway '172.31.0.1'
+	list dns '172.17.0.1'
+	option ipv6 '1'
+	option experimental '1'
+	option ipv6tables '1'
+	option fixed_cidr_v6 '2408:820c:8f29:5c00:172:31:0:0/112'
+	option default-gateway-v6 '2408:820c:8f29:5c00:172:31:0:1'
+	list dns '2408:820c:8f29:5c00:172:31:0:1'
+	list registry_mirrors 'https://image.cloudlayer.icu'
+	list registry_mirrors 'https://docker-0.unsee.tech'
+	list registry_mirrors 'https://hub.docker.com'
+
+# If your organization uses a proxy server to connect to the internet, you may need to configure the proxy.
+# See https://docs.docker.com/engine/daemon/proxy/ for more details
+config proxies 'proxies'
+#	option http_proxy 'http://proxy.example.com:3128'
+#	option https_proxy 'https://proxy.example.com:3129'
+#	option no_proxy '*.test.example.com,.example.org,127.0.0.0/8'
+
+# Docker doesn't work well out of the box with fw4. This is because Docker relies on a compatibility layer that
+# naively translates iptables rules. For the best compatibility replace the following dependencies:
+# `firewall4` -> `firewall`
+# `iptables-nft` -> `iptables-legacy`
+# `ip6tables-nft` -> `ip6tables-legacy`
+
+# Docker undermines the fw3 rules. By default all external source IPs are allowed to connect to the Docker host.
+# See https://docs.docker.com/network/iptables/ for more details.
+
+# firewall config changes are only additive i.e firewall will need to be restarted first to clear old changes,
+# then docker restarted to load in new changes.
+config firewall 'firewall'
+	option device 'docker0'
+#	list blocked_interfaces 'wan'
+#	option extra_iptables_args '--match conntrack ! --ctstate RELATED,ESTABLISHED' # allow outbound connections
