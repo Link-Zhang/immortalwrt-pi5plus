@@ -1,0 +1,7 @@
+# See https://openwrt.org/docs/guide-user/base-system/dropbear
+config dropbear
+	option enable '1'
+	option PasswordAuth 'on'
+	option Port '22'
+	option RootPasswordAuth 'on'
+	option BannerFile '/etc/banner'
